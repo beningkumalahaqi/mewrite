@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { comparePassword } from '@/lib/auth/password'
-import { SignJWT } from 'jose'
-
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'mewrite-secret-key-change-in-production')
+import { createSession } from '@/lib/auth/session'
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,21 +24,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const token = await new SignJWT({ userId: user.id })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('7d')
-      .sign(JWT_SECRET)
+    await createSession(user.id)
 
-    const response = NextResponse.json({ success: true })
-    response.cookies.set('session', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
-      path: '/',
-    })
-
-    return response
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
