@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   },
   description: "A collection of writings and thoughts.",
   metadataBase: new URL(baseUrl),
+  icons: {
+    icon: "/favicon.ico",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -28,9 +31,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
       <body>{children}</body>
     </html>
   );
