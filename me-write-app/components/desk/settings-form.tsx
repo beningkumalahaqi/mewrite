@@ -29,7 +29,7 @@ export function SettingsForm({ initialData }: SettingsFormProps) {
         body: JSON.stringify({
           name: name.trim(),
           bio: bio.trim() || undefined,
-          avatarUrl: imageUrl,
+          imageUrl: imageUrl,
         }),
       })
       setSaveMsg(true)

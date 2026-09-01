@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { requireAuth } from '@/lib/auth/middleware'
 
 export async function PUT(req: NextRequest) {
   try {
+    await requireAuth()
+
     const { name, bio, imageUrl } = await req.json()
 
     let author = await db.author.findFirst()
