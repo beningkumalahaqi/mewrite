@@ -427,6 +427,13 @@ h5 { font-size: var(--text-xl); }
   color: var(--muted);
 }
 
+.writing-header__meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+}
+
 .writing-body {
   max-width: var(--content-width);
   margin: 0 auto;

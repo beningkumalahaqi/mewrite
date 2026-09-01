@@ -34,3 +34,13 @@ model Writing {
 
   @@index([published, date])
 }
+
+model ShortUrl {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  targetUrl String
+  clicks    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([code])
+}

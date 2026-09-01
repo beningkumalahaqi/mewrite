@@ -5,8 +5,13 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'HaqiZ — Writings',
-  description: 'A collection of writings by HaqiZ.',
+  title: 'MeWrite — Writings',
+  description: 'A collection of writings and thoughts. Explore published works on various topics.',
+  openGraph: {
+    title: 'MeWrite — Writings',
+    description: 'A collection of writings and thoughts.',
+    type: 'website',
+  },
 }
 
 export default async function HomePage() {
