@@ -68,8 +68,6 @@ export function DeskWritingList({ initialWritings }: { initialWritings: Writing[
     try {
       const res = await fetch(`/api/writings/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
       })
       if (res.ok) {
         setWritings(prev => prev.filter(w => w.id !== id))
