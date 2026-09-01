@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   },
   description: "A collection of writings and thoughts.",
   metadataBase: new URL(baseUrl),
-  icons: {
-    icon: "/favicon.ico",
-  },
   openGraph: {
     type: "website",
     locale: "en_US",
