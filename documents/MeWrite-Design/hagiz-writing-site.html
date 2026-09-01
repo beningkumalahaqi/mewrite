@@ -1,0 +1,57 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HaqiZ — Writings</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav__brand">HaqiZ</a>
+      <div class="nav__links">
+        <a href="index.html" class="active">Writings</a>
+        <a href="desk.html">Desk</a>
+      </div>
+    </nav>
+
+    <main>
+      <header style="margin-bottom: var(--space-12);">
+        <h1 style="font-family: var(--font-display); font-size: var(--text-4xl); font-weight: 400; margin-bottom: var(--space-3);">HaqiZ</h1>
+        <p style="color: var(--muted); font-size: var(--text-base); max-width: 480px;">Writer. Reader. Occasionally both at the same time.</p>
+      </header>
+
+      <div id="archive" class="writing-list"></div>
+    </main>
+
+    <footer class="footer">
+      <span>HaqiZ</span>
+      <span>© 2026</span>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (function() {
+      var writings = App.getWritings(true);
+      var archive = document.getElementById('archive');
+
+      if (writings.length === 0) {
+        archive.innerHTML = '<div class="empty-state"><div class="empty-state__title">The desk is quiet.</div><p class="empty-state__text">Writings will appear here once published.</p></div>';
+        return;
+      }
+
+      archive.innerHTML = writings.map(function(w) {
+        var preview = App.truncate(App.stripHtml(w.content), 140);
+        return '<a href="writing.html?id=' + w.id + '" class="writing-item" style="display:block; color:inherit; text-decoration:none;">' +
+          '<div class="writing-item__date">' + App.formatDate(w.date) + '</div>' +
+          '<h2 class="writing-item__title">' + (w.title || '<em style="color:var(--muted)">Untitled</em>') + '</h2>' +
+          '<p class="writing-item__preview">' + preview + '</p>' +
+        '</a>';
+      }).join('');
+    })();
+  </script>
+</body>
+</html>

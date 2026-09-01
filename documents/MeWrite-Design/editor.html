@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HaqiZ — Editor</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .editor-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-6);
+      gap: var(--space-4);
+    }
+    .editor-topbar__label {
+      font-size: var(--text-sm);
+      color: var(--muted);
+      flex: 1;
+      text-align: center;
+    }
+    .editor-meta {
+      max-width: var(--content-width);
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+    .editor-meta .form-input--display {
+      width: 100%;
+    }
+    .editor-meta .form-input[type="date"] {
+      width: auto;
+      font-size: var(--text-sm);
+      color: var(--muted);
+      border: none;
+      background: transparent;
+      padding: var(--space-2) 0;
+    }
+    .editor-meta .form-input[type="date"]:focus {
+      outline: none;
+    }
+    .editor-wrapper {
+      max-width: var(--content-width);
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+    }
+    .save-status {
+      font-size: var(--text-xs);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      transition: opacity var(--duration) var(--ease);
+    }
+    @media (max-width: 768px) {
+      .editor-meta {
+        padding: 0 var(--space-4);
+      }
+      .editor-meta .form-input[type="date"] {
+        font-size: var(--text-xs);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="editor-topbar">
+      <a href="desk.html" class="btn btn--ghost btn--sm">← Desk</a>
+      <span class="editor-topbar__label" id="editor-label">New writing</span>
+      <div style="display:flex;align-items:center;gap:var(--space-3);">
+        <span class="save-status" id="save-status"></span>
+        <button class="btn btn--primary btn--sm" id="save-btn">Save</button>
+      </div>
+    </div>
+
+    <div class="editor-meta">
+      <input type="date" class="form-input" id="writing-date" style="margin-bottom:var(--space-4);">
+      <input type="text" class="form-input form-input--display" id="writing-title" placeholder="Untitled">
+    </div>
+
+    <div style="margin-top:var(--space-6);">
+      <div class="editor-wrapper">
+        <div class="editor-toolbar" id="toolbar">
+          <button class="editor-toolbar__btn" data-cmd="bold" title="Bold"><strong>B</strong></button>
+          <button class="editor-toolbar__btn" data-cmd="italic" title="Italic"><em>I</em></button>
+          <span class="editor-toolbar__sep"></span>
+          <button class="editor-toolbar__btn" data-cmd="h2" title="Heading">H2</button>
+          <button class="editor-toolbar__btn" data-cmd="blockquote" title="Quote">"</button>
+          <button class="editor-toolbar__btn" data-cmd="link" title="Link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </button>
+          <span class="editor-toolbar__sep"></span>
+          <button class="editor-toolbar__btn" data-cmd="insertOrderedList" title="Ordered list">1.</button>
+          <button class="editor-toolbar__btn" data-cmd="insertUnorderedList" title="Unordered list">•</button>
+        </div>
+        <div class="editor-area" id="writing-content" contenteditable="true" data-placeholder="Begin writing…"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (function() {
+      if (!App.checkAuth()) return;
+
+      var params = new URLSearchParams(window.location.search);
+      var editingId = params.get('id');
+      var writing = editingId ? App.getWriting(editingId) : null;
+      var dirty = false;
+
+      var titleInput = document.getElementById('writing-title');
+      var dateInput = document.getElementById('writing-date');
+      var contentEl = document.getElementById('writing-content');
+      var statusEl = document.getElementById('save-status');
+      var labelEl = document.getElementById('editor-label');
+
+      if (writing) {
+        labelEl.textContent = 'Edit writing';
+        titleInput.value = writing.title || '';
+        dateInput.value = writing.date || new Date().toISOString().slice(0, 10);
+        contentEl.innerHTML = writing.content || '';
+        document.title = 'HaqiZ — Edit';
+      } else {
+        dateInput.value = new Date().toISOString().slice(0, 10);
+        document.title = 'HaqiZ — New writing';
+      }
+
+      function markDirty() {
+        if (!dirty) {
+          dirty = true;
+          statusEl.textContent = 'Unsaved';
+        }
+      }
+
+      function markClean() {
+        dirty = false;
+        statusEl.textContent = 'Saved';
+        setTimeout(function() { statusEl.textContent = ''; }, 2000);
+      }
+
+      titleInput.addEventListener('input', markDirty);
+      dateInput.addEventListener('input', markDirty);
+      contentEl.addEventListener('input', markDirty);
+
+      document.getElementById('toolbar').addEventListener('click', function(e) {
+        var btn = e.target.closest('.editor-toolbar__btn');
+        if (!btn) return;
+        var cmd = btn.getAttribute('data-cmd');
+        contentEl.focus();
+
+        if (cmd === 'h2') {
+          document.execCommand('formatBlock', false, 'h2');
+        } else if (cmd === 'blockquote') {
+          document.execCommand('formatBlock', false, 'blockquote');
+        } else if (cmd === 'link') {
+          var url = prompt('Enter URL:');
+          if (url) document.execCommand('createLink', false, url);
+        } else {
+          document.execCommand(cmd, false, null);
+        }
+        markDirty();
+      });
+
+      function save() {
+        var data = {
+          title: titleInput.value.trim(),
+          date: dateInput.value,
+          content: contentEl.innerHTML,
+        };
+
+        if (editingId) {
+          App.updateWriting(editingId, data);
+        } else {
+          var created = App.createWriting(data);
+          editingId = created.id;
+          history.replaceState(null, '', '?id=' + editingId);
+          labelEl.textContent = 'Edit writing';
+        }
+        markClean();
+      }
+
+      document.getElementById('save-btn').addEventListener('click', save);
+
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+          e.preventDefault();
+          save();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

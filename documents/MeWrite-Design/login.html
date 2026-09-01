@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HaqiZ — Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <h1 class="login-card__title">HaqiZ</h1>
+      <p class="login-card__subtitle">Private desk</p>
+
+      <form id="login-form">
+        <div class="form-group">
+          <input type="password" class="form-input" id="password" placeholder="Password" autofocus required>
+        </div>
+        <div id="error-msg" style="font-size:var(--text-sm);color:#c0392b;margin-bottom:var(--space-4);display:none;">Incorrect password</div>
+        <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center;">Enter</button>
+      </form>
+
+        <div class="form-hint" style="text-align:center;margin-top:var(--space-6);">Hint: haqiz</div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (function() {
+      var session = App.getSession();
+      if (session.loggedIn) {
+        window.location.href = 'desk.html';
+        return;
+      }
+
+      var form = document.getElementById('login-form');
+      var password = document.getElementById('password');
+      var error = document.getElementById('error-msg');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var ok = App.login(password.value);
+        if (ok) {
+          window.location.href = 'desk.html';
+        } else {
+          error.style.display = 'block';
+          password.value = '';
+          password.focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

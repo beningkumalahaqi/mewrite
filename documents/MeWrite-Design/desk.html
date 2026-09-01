@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HaqiZ — Desk</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav__brand">HaqiZ</a>
+      <div class="nav__links">
+        <a href="index.html">Public site</a>
+        <a href="settings.html">Settings</a>
+        <a href="#" id="logout-btn">Log out</a>
+      </div>
+    </nav>
+
+    <main>
+      <header style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-10);flex-wrap:wrap;gap:var(--space-4);">
+        <div>
+          <h1 style="font-family:var(--font-display);font-size:var(--text-4xl);font-weight:400;">Desk</h1>
+          <p style="color:var(--muted);font-size:var(--text-sm);margin-top:var(--space-1);">Your writings</p>
+        </div>
+        <a href="editor.html" class="btn btn--primary">New writing →</a>
+      </header>
+
+      <div id="desk-list" class="desk-list"></div>
+    </main>
+
+    <footer class="footer">
+      <span>HaqiZ</span>
+      <span>© 2026</span>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (function() {
+      if (!App.checkAuth()) return;
+
+      document.getElementById('logout-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        App.logout();
+        window.location.href = 'login.html';
+      });
+
+      function renderList() {
+        var writings = App.getWritings(false);
+        var list = document.getElementById('desk-list');
+
+        if (writings.length === 0) {
+          list.innerHTML =
+            '<div class="empty-state">' +
+              '<div class="empty-state__title">Your desk is empty.</div>' +
+              '<p class="empty-state__text">Start writing — put something into the world.</p>' +
+              '<a href="editor.html" class="btn btn--primary">New writing →</a>' +
+            '</div>';
+          return;
+        }
+
+        list.innerHTML = writings.map(function(w) {
+          var title = w.title
+            ? '<div class="desk-item__title">' + w.title + '</div>'
+            : '<div class="desk-item__title desk-item__title--untitled">Untitled</div>';
+          var statusClass = w.published ? 'status--published' : 'status--draft';
+          var statusLabel = w.published ? 'Published' : 'Draft';
+          var toggleLabel = w.published ? 'Unpublish' : 'Publish';
+
+          return '<div class="desk-item" data-id="' + w.id + '">' +
+            '<div class="desk-item__main">' +
+              title +
+              '<div class="desk-item__meta">' +
+                '<span>' + App.formatDate(w.date) + '</span>' +
+                '<span class="status ' + statusClass + '">' + statusLabel + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="desk-item__actions">' +
+              '<a href="editor.html?id=' + w.id + '" class="btn btn--ghost btn--sm">Edit</a>' +
+              '<button class="btn btn--secondary btn--sm toggle-pub" data-id="' + w.id + '">' + toggleLabel + '</button>' +
+              '<button class="btn btn--danger btn--sm delete-btn" data-id="' + w.id + '">Delete</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      renderList();
+
+      document.getElementById('desk-list').addEventListener('click', function(e) {
+        var target = e.target;
+
+        if (target.classList.contains('toggle-pub')) {
+          var id = target.getAttribute('data-id');
+          App.togglePublish(id);
+          renderList();
+          return;
+        }
+
+        if (target.classList.contains('delete-btn')) {
+          var id = target.getAttribute('data-id');
+          if (confirm('Delete this writing? This cannot be undone.')) {
+            App.deleteWriting(id);
+            renderList();
+          }
+          return;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

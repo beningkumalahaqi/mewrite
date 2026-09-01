@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HaqiZ — Author Settings</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav__brand">HaqiZ</a>
+      <div class="nav__links">
+        <a href="desk.html">← Desk</a>
+        <a href="#" id="logout-btn">Log out</a>
+      </div>
+    </nav>
+
+    <main>
+      <div class="settings-page">
+        <h1 class="settings-page__title">Author Settings</h1>
+
+        <div class="settings-avatar">
+          <div class="settings-avatar__preview" id="avatar-preview">H</div>
+          <div class="settings-avatar__actions">
+            <label class="btn btn--secondary btn--sm" for="avatar-upload" style="cursor:pointer;">Upload photo</label>
+            <input type="file" id="avatar-upload" accept="image/*" style="display:none;">
+            <button class="btn btn--ghost btn--sm" id="avatar-remove" style="display:none;">Remove</button>
+          </div>
+        </div>
+
+        <form id="settings-form">
+          <div class="form-group">
+            <label class="form-label" for="author-name">Author name</label>
+            <input type="text" class="form-input" id="author-name" required placeholder="Your name">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="author-bio">Short bio</label>
+            <textarea class="form-textarea" id="author-bio" style="min-height:120px;" placeholder="A few sentences about yourself."></textarea>
+            <div class="form-hint">This appears on your public writings.</div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:var(--space-4);margin-top:var(--space-8);">
+            <button type="submit" class="btn btn--primary">Save settings</button>
+            <span id="save-msg" style="font-size:var(--text-sm);color:var(--muted);opacity:0;transition:opacity 0.3s;">Settings saved.</span>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>HaqiZ</span>
+      <span>© 2026</span>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (function() {
+      if (!App.checkAuth()) return;
+
+      document.getElementById('logout-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        App.logout();
+        window.location.href = 'login.html';
+      });
+
+      var author = App.getAuthor();
+      var nameInput = document.getElementById('author-name');
+      var bioInput = document.getElementById('author-bio');
+      var avatarPreview = document.getElementById('avatar-preview');
+      var avatarUpload = document.getElementById('avatar-upload');
+      var avatarRemove = document.getElementById('avatar-remove');
+      var saveMsg = document.getElementById('save-msg');
+      var currentAvatar = author.avatar;
+
+      nameInput.value = author.name || '';
+      bioInput.value = author.bio || '';
+      updateAvatarPreview();
+
+      function updateAvatarPreview() {
+        if (currentAvatar) {
+          avatarPreview.innerHTML = '<img src="' + currentAvatar + '" alt="Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+          avatarRemove.style.display = '';
+        } else {
+          avatarPreview.textContent = (nameInput.value || 'H').charAt(0).toUpperCase();
+          avatarRemove.style.display = 'none';
+        }
+      }
+
+      nameInput.addEventListener('input', function() {
+        if (!currentAvatar) updateAvatarPreview();
+      });
+
+      avatarUpload.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          currentAvatar = ev.target.result;
+          updateAvatarPreview();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      avatarRemove.addEventListener('click', function() {
+        currentAvatar = null;
+        avatarUpload.value = '';
+        updateAvatarPreview();
+      });
+
+      document.getElementById('settings-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        App.saveAuthor({
+          name: nameInput.value.trim(),
+          bio: bioInput.value.trim(),
+          avatar: currentAvatar,
+        });
+        saveMsg.style.opacity = '1';
+        setTimeout(function() { saveMsg.style.opacity = '0'; }, 2500);
+      });
+    })();
+  </script>
+</body>
+</html>
