@@ -1,7 +1,7 @@
 export function PublicFooter() {
   return (
     <footer className="footer">
-      <span>HaqiZ</span>
+      <span>MeWrite</span>
       <span>© {new Date().getFullYear()}</span>
     </footer>
   )
