@@ -1,6 +1,23 @@
-# MeWrite
+<p align="center">
+  <img src="me-write-app/public/MeWriteLogo.png" alt="MeWrite" width="80" />
+</p>
 
-A minimal, fast personal writing platform built with Next.js. Write, manage, and publish long-form thoughts with a clean reading experience.
+<h1 align="center">MeWrite</h1>
+
+<p align="center">
+  A minimal, fast personal writing platform built with Next.js.
+</p>
+
+<p align="center">
+  <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" /></a>
+  <a href="https://www.prisma.io"><img src="https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma" alt="Prisma" /></a>
+  <a href="https://www.postgresql.org"><img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://tiptap.dev"><img src="https://img.shields.io/badge/Tiptap-3-00D4AA" alt="Tiptap" /></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>
+  <a href="https://zod.dev"><img src="https://img.shields.io/badge/Zod-4-3068B7" alt="Zod" /></a>
+  <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Vitest-4-729B1B?logo=vitest" alt="Vitest" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green" alt="License" /></a>
+</p>
 
 ## What It Does
 
