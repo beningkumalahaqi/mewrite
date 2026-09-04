@@ -22,7 +22,7 @@ export default async function HomePage() {
 
   return (
     <main>
-      <header style={{ paddingTop: 'var(--space-4)', marginBottom: 'var(--space-20)', display: 'grid', gridTemplateColumns: 'auto 1fr', alignItems: 'center', gap: 'var(--space-6)' }}>
+      <header className="home-header" style={{ paddingTop: 'var(--space-4)', marginBottom: 'var(--space-20)', display: 'grid', gridTemplateColumns: 'auto 1fr', alignItems: 'center', gap: 'var(--space-6)' }}>
         {author?.imageUrl && (
           <img
             src={author.imageUrl}

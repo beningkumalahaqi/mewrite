@@ -1550,6 +1550,16 @@ h5 { font-size: var(--text-xl); }
     gap: var(--space-4);
   }
 
+  .home-header {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .home-header img {
+    width: 72px;
+    height: 72px;
+  }
+
   .writing-header {
     padding: var(--space-10) 0 var(--space-8);
   }
