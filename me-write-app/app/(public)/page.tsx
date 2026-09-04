@@ -22,13 +22,22 @@ export default async function HomePage() {
 
   return (
     <main>
-      <header style={{ marginBottom: 'var(--space-12)' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-4xl)', fontWeight: 400, marginBottom: 'var(--space-3)' }}>
-          {author?.name || 'HaqiZ'}
-        </h1>
-        <p style={{ color: 'var(--muted)', fontSize: 'var(--text-base)', maxWidth: '480px' }}>
-          {author?.bio || 'Writer. Reader. Occasionally both at the same time.'}
-        </p>
+      <header style={{ paddingTop: 'var(--space-4)', marginBottom: 'var(--space-20)', display: 'grid', gridTemplateColumns: 'auto 1fr', alignItems: 'center', gap: 'var(--space-6)' }}>
+        {author?.imageUrl && (
+          <img
+            src={author.imageUrl}
+            alt={author.name || 'Author'}
+            style={{ width: 96, height: 96, borderRadius: 10, objectFit: 'cover' }}
+          />
+        )}
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-4xl)', fontWeight: 300, lineHeight: 1, letterSpacing: '-0.02em', marginBottom: 'var(--space-1)' }}>
+            {author?.name || 'HaqiZ'}
+          </h1>
+          <p style={{ color: 'var(--muted)', fontSize: 'var(--text-xs)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            {author?.bio || 'Writer. Reader. Occasionally both at the same time.'}
+          </p>
+        </div>
       </header>
       <WritingList />
     </main>
