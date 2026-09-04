@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { db } from '@/lib/db'
 import { DeskWritingList } from '@/components/desk/writing-list'
 
+export const instant = false
+
 export default async function DeskPage() {
   const writings = await db.writing.findMany({
     orderBy: { date: 'desc' },

@@ -3,6 +3,8 @@ import { DeskNav } from '@/components/desk/nav'
 import { PublicFooter } from '@/components/public/footer'
 import { ChatProvider } from '@/components/chat/chat-provider'
 
+export const instant = false
+
 export default async function DeskLayout({ children }: { children: React.ReactNode }) {
   await requireAuth()
 

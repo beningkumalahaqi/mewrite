@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { db } from '@/lib/db'
 import { WritingEditor } from '@/components/editor/editor'
 
+export const instant = false
+
 interface EditWritingPageProps {
   params: Promise<{ id: string }>
 }

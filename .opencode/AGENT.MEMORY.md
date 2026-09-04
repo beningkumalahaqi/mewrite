@@ -7,7 +7,12 @@
 
 ## Caching Implementation
 - `'use cache'` + `cacheLife('max')` + `cacheTag` used on: writing page (`getWriting` helper), `generateMetadata`, home page, `WritingList`, `AuthorCard`, `PublicFooter`
-- `export const instant = false` on writing detail page (`/writings/[slug]`) because `params` is per-request
+- `export const instant = false` on all dynamic routes with DB/auth/params access:
+  - `app/(public)/writings/[slug]/page.tsx` — `params` is per-request
+  - `app/desk/layout.tsx` — `requireAuth()` reads cookies
+  - `app/desk/page.tsx` — uncached DB call
+  - `app/desk/settings/page.tsx` — uncached DB call
+  - `app/desk/writings/[id]/page.tsx` — `params` + uncached DB call
 - `revalidateTag` requires 2 args in Next.js 16: `(tag, { expire: 0 })` for immediate invalidation
 - `revalidatePath` with literal paths (e.g. `'/'`, `'/writings/slug'`) — no `type` arg needed for literal paths
 - `notFound()` called outside cached scope to avoid prerender breakage

@@ -1,6 +1,8 @@
 import { db } from '@/lib/db'
 import { SettingsForm } from '@/components/desk/settings-form'
 
+export const instant = false
+
 export default async function SettingsPage() {
   let author = await db.author.findFirst()
 
