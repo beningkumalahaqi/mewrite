@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { db } from '@/lib/db'
 import { generateSlug } from '@/lib/slug'
 import { isValidTiptapDocument, sanitizeTiptapContent } from '@/lib/sanitize'
@@ -64,6 +65,14 @@ export async function PUT(req: NextRequest) {
         date: new Date(date),
       },
     })
+
+    if (existing.published) {
+      revalidatePath('/')
+      revalidatePath(`/writings/${writing.slug}`)
+      revalidateTag(`writing-${writing.slug}`, { expire: 0 })
+      revalidateTag('home', { expire: 0 })
+      revalidateTag('writings-list', { expire: 0 })
+    }
 
     return NextResponse.json({ id: writing.id, slug: writing.slug })
   } catch (error) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { db } from '@/lib/db'
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -15,6 +16,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       where: { id },
       data: { published },
     })
+
+    revalidatePath('/')
+    revalidatePath(`/writings/${writing.slug}`)
+    revalidateTag(`writing-${writing.slug}`, { expire: 0 })
+    revalidateTag('home', { expire: 0 })
+    revalidateTag('writings-list', { expire: 0 })
 
     return NextResponse.json({ id: writing.id, published: writing.published })
   } catch (error) {
@@ -33,6 +40,14 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
 
     await db.writing.delete({ where: { id } })
+
+    if (existing.published) {
+      revalidatePath('/')
+      revalidatePath(`/writings/${existing.slug}`)
+      revalidateTag(`writing-${existing.slug}`, { expire: 0 })
+      revalidateTag('home', { expire: 0 })
+      revalidateTag('writings-list', { expire: 0 })
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

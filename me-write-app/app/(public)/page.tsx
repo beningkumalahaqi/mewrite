@@ -1,8 +1,7 @@
+import { cacheLife, cacheTag } from 'next/cache'
 import { db } from '@/lib/db'
 import { WritingList } from '@/components/public/writing-list'
 import type { Metadata } from 'next'
-
-export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'MeWrite — Writings',
@@ -15,6 +14,10 @@ export const metadata: Metadata = {
 }
 
 export default async function HomePage() {
+  'use cache'
+  cacheLife('max')
+  cacheTag('home')
+
   const author = await db.author.findFirst()
 
   return (

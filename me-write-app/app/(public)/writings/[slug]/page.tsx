@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { cacheLife, cacheTag } from 'next/cache'
 import { db } from '@/lib/db'
 import { TiptapRenderer } from '@/components/editor/tiptap-renderer'
 import { AuthorCard } from '@/components/public/author-card'
@@ -7,7 +8,7 @@ import { ShareButton } from '@/components/public/share-button'
 import { extractPlainText } from '@/lib/sanitize'
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+export const instant = false
 
 interface WritingPageProps {
   params: Promise<{ slug: string }>
@@ -15,11 +16,23 @@ interface WritingPageProps {
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mewrite.vercel.app'
 
-export async function generateMetadata({ params }: WritingPageProps): Promise<Metadata> {
-  const { slug } = await params
+async function getWriting(slug: string) {
+  'use cache'
+  cacheLife('max')
+  cacheTag('writing-page', `writing-${slug}`)
+
   const writing = await db.writing.findUnique({
     where: { slug },
   })
+
+  const author = await db.author.findFirst()
+
+  return { writing, author }
+}
+
+export async function generateMetadata({ params }: WritingPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { writing, author } = await getWriting(slug)
 
   if (!writing || !writing.published) {
     return { title: 'Not Found' }
@@ -27,7 +40,6 @@ export async function generateMetadata({ params }: WritingPageProps): Promise<Me
 
   const plainText = extractPlainText(writing.content as any)
   const description = plainText.slice(0, 160) + (plainText.length > 160 ? '...' : '')
-  const author = await db.author.findFirst()
   const url = `${baseUrl}/writings/${slug}`
 
   return {
@@ -55,16 +67,12 @@ export async function generateMetadata({ params }: WritingPageProps): Promise<Me
 
 export default async function WritingPage({ params }: WritingPageProps) {
   const { slug } = await params
-  
-  const writing = await db.writing.findUnique({
-    where: { slug },
-  })
+  const { writing, author } = await getWriting(slug)
 
   if (!writing || !writing.published) {
     notFound()
   }
 
-  const author = await db.author.findFirst()
   const plainText = extractPlainText(writing.content as any)
   const description = plainText.slice(0, 160) + (plainText.length > 160 ? '...' : '')
   const url = `${baseUrl}/writings/${slug}`
@@ -77,7 +85,6 @@ export default async function WritingPage({ params }: WritingPageProps) {
     })
   }
 
-  // JSON-LD structured data
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',

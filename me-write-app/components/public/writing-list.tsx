@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { cacheLife, cacheTag } from 'next/cache'
 import { db } from '@/lib/db'
 import { extractPlainText, truncate } from '@/lib/sanitize'
 import type { Writing } from '@prisma/client'
@@ -12,6 +13,10 @@ function formatDate(dateStr: Date): string {
 }
 
 export async function WritingList() {
+  'use cache'
+  cacheLife('max')
+  cacheTag('writings-list')
+
   const writings = await db.writing.findMany({
     where: { published: true },
     orderBy: { date: 'desc' },

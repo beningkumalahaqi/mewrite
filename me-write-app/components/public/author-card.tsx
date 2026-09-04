@@ -1,6 +1,10 @@
+import { cacheLife } from 'next/cache'
 import { db } from '@/lib/db'
 
 export async function AuthorCard() {
+  'use cache'
+  cacheLife('max')
+
   const author = await db.author.findFirst()
 
   if (!author) return null

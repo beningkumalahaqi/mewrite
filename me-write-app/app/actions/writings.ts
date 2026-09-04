@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { db } from '@/lib/db'
 import { requireAuth } from '@/lib/auth/middleware'
 import { generateSlug } from '@/lib/slug'
@@ -63,6 +63,9 @@ export async function updateWriting(data: { id: string; title?: string; date: st
   if (writing.published) {
     revalidatePath('/')
     revalidatePath(`/writings/${writing.slug}`)
+    revalidateTag(`writing-${writing.slug}`, { expire: 0 })
+    revalidateTag('home', { expire: 0 })
+    revalidateTag('writings-list', { expire: 0 })
   }
 
   return { id: writing.id, slug: writing.slug }
@@ -88,6 +91,9 @@ export async function deleteWriting(data: { id: string }) {
   if (existing.published) {
     revalidatePath('/')
     revalidatePath(`/writings/${existing.slug}`)
+    revalidateTag(`writing-${existing.slug}`, { expire: 0 })
+    revalidateTag('home', { expire: 0 })
+    revalidateTag('writings-list', { expire: 0 })
   }
 
   return { success: true }
@@ -117,6 +123,9 @@ export async function publishWriting(data: { id: string }) {
 
   revalidatePath('/')
   revalidatePath(`/writings/${writing.slug}`)
+  revalidateTag(`writing-${writing.slug}`, { expire: 0 })
+  revalidateTag('home', { expire: 0 })
+  revalidateTag('writings-list', { expire: 0 })
 
   return { success: true }
 }
@@ -145,6 +154,9 @@ export async function unpublishWriting(data: { id: string }) {
 
   revalidatePath('/')
   revalidatePath(`/writings/${writing.slug}`)
+  revalidateTag(`writing-${writing.slug}`, { expire: 0 })
+  revalidateTag('home', { expire: 0 })
+  revalidateTag('writings-list', { expire: 0 })
 
   return { success: true }
 }
